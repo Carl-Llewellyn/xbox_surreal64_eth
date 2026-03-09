@@ -14,8 +14,10 @@
 #define NET_REMOTE_IP   "10.10.10.1"
 
 //fixed packet layout
-#define NET_PACKET_WORDS 8
-#define NET_PACKET_BYTES (NET_PACKET_WORDS * 4)
+#define NET_PACKET_WORDS    8
+#define NET_META_BYTES      (NET_PACKET_WORDS * 4)
+#define NET_PAYLOAD_BYTES   32
+#define NET_PACKET_BYTES    (NET_META_BYTES + NET_PAYLOAD_BYTES)
 
 //single producer single consumer ring
 #define NET_RING_SIZE    256
@@ -33,6 +35,8 @@ typedef struct NetEvent_s {
 	uint32 rt;
 	uint32 pc;
 	uint32 seq;
+	uint32 payload_len;
+	uint8 payload[NET_PAYLOAD_BYTES];
 } NetEvent;
 
 //global network module state
@@ -95,9 +99,15 @@ static __forceinline BOOL Dequeue(NetEvent *e)
 static void SendEvent(const NetEvent *e)
 {
 	uint8 pkt[NET_PACKET_BYTES];
+	uint32 copyLen = e->payload_len;
 
-	//w0 magic 'nsr1'
-	PutBE32(pkt +  0, 0x4E535231);
+	if(copyLen > NET_PAYLOAD_BYTES) {
+		copyLen = NET_PAYLOAD_BYTES;
+	}
+	memset(pkt, 0, sizeof(pkt));
+
+	//w0 magic 'nsr2'
+	PutBE32(pkt +  0, 0x4E535232);
 	//w1 sequence
 	PutBE32(pkt +  4, e->seq);
 	//w2 compact op/rt/addr low
@@ -110,8 +120,13 @@ static void SendEvent(const NetEvent *e)
 	PutBE32(pkt + 20, e->pc);
 	//w6 current drop counter
 	PutBE32(pkt + 24, (uint32)g_net.drops);
-	//w7 reserved
-	PutBE32(pkt + 28, 0);
+	//w7 payload length in bytes (<= 32)
+	PutBE32(pkt + 28, copyLen);
+
+	//payload bytes start at offset 32
+	if(copyLen > 0) {
+		memcpy(pkt + NET_META_BYTES, e->payload, copyLen);
+	}
 
 	sendto(g_net.sock, (const char *)pkt, NET_PACKET_BYTES, 0, (SOCKADDR *)&g_net.remote, sizeof(g_net.remote));
 }
@@ -207,9 +222,11 @@ void NetProbe_Shutdown(void)
 
 //public enqueue api used by intercept code
 //this is safe to call from emu thread hot paths
-void NetProbe_QueueEvent(uint32 op, uint32 addr, uint32 value, uint32 rt, uint32 pc)
+void NetProbe_QueueEvent(uint32 op, uint32 addr, uint32 value, uint32 rt, uint32 pc, const uint8* payload, uint32 payload_len)
 {
 	NetEvent e;
+	uint32 copyLen;
+
 	if(!g_net.started) return;
 	e.op = op;
 	e.addr = addr;
@@ -217,5 +234,14 @@ void NetProbe_QueueEvent(uint32 op, uint32 addr, uint32 value, uint32 rt, uint32
 	e.rt = rt;
 	e.pc = pc;
 	e.seq = (uint32)InterlockedIncrement(&g_net.seq);
+	copyLen = payload_len;
+	if(copyLen > NET_PAYLOAD_BYTES) {
+		copyLen = NET_PAYLOAD_BYTES;
+	}
+	e.payload_len = copyLen;
+	memset(e.payload, 0, sizeof(e.payload));
+	if((payload != NULL) && (copyLen > 0)) {
+		memcpy(e.payload, payload, copyLen);
+	}
 	Enqueue(&e);
 }

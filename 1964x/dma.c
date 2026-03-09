@@ -505,14 +505,35 @@ L1:
 		PIDMAInProgress = NO_DMA_IN_PROGRESS;
 		EXTRA_DMA_TIMING(PIDMALength);
 		Trigger_PIInterrupt();
-		NetProbe_QueueEvent(
-			0x31,                              // op
-			(pi_cart_addr_reg & 0x1FFFFFFF),  // start cart addr
-			len,                               // put DMA length here
-			0,
-			gHWS_pc
-		);
-		return;
+
+		//this is the range outside of the oot save structure: https://wiki.cloudmodding.com/oot/Save_Format
+		//so it should.. maybe not conflict with anything OOT does in the SRAM
+		if (((pi_cart_addr_reg & 0x0000FFFF) >= 0x7A00) && ((pi_cart_addr_reg & 0x0000FFFF) <  0x7A20)){
+			uint8 payload[32];
+			uint32 payload_len = len;
+			uint32 i;
+			if(payload_len > sizeof(payload)) {
+				payload_len = sizeof(payload);
+			}
+			for(i = 0; i < payload_len; i++) {
+				payload[i] = MEM_READ_UBYTE(PIDMATargetAddress + i);
+			}
+			for(; i < sizeof(payload); i++) {
+				payload[i] = 0;
+			}
+
+			NetProbe_QueueEvent(
+				0x31,                              // op
+				(pi_cart_addr_reg & 0x1FFFFFFF),  // start cart addr
+				len,                               // put DMA length here
+				0,
+				gHWS_pc,
+				payload,
+				payload_len
+			);
+		}
+
+			return;
 	}
 
 	/*

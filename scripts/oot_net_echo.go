@@ -4,13 +4,17 @@ import (
 	"encoding/binary"
 	"flag"
 	"fmt"
+	"math"
 	"net"
 	"time"
 )
 
 const (
-	packetBytes = 32
-	wordCount   = packetBytes / 4
+	metaBytes   = 32
+	packetBytes = 64
+	wordCount   = metaBytes / 4
+	magicNSR1   = 0x4E535231
+	magicNSR2   = 0x4E535232
 )
 
 func decodeWordsBE(b []byte) [wordCount]uint32 {
@@ -19,6 +23,10 @@ func decodeWordsBE(b []byte) [wordCount]uint32 {
 		words[i] = binary.BigEndian.Uint32(b[i*4 : i*4+4])
 	}
 	return words
+}
+
+func u32ToF32BE(v uint32) float32 {
+	return math.Float32frombits(v)
 }
 
 func main() {
@@ -44,24 +52,85 @@ func main() {
 			fmt.Printf("read error: %v\n", err)
 			continue
 		}
-		if n < packetBytes {
-			fmt.Printf("short packet from=%s size=%d (need %d)\n", addr.String(), n, packetBytes)
+		if n < metaBytes {
+			fmt.Printf("short packet from=%s size=%d (need at least %d)\n", addr.String(), n, metaBytes)
 			continue
 		}
 
 		var p [packetBytes]byte
-		copy(p[:], buf[:packetBytes])
-		words := decodeWordsBE(p[:])
+		copyLen := n
+		if copyLen > packetBytes {
+			copyLen = packetBytes
+		}
+		copy(p[:], buf[:copyLen])
+		words := decodeWordsBE(p[:metaBytes])
 		rxCount++
 
-		fmt.Printf(
-			"rx#%d from=%s w0=%08X w1=%08X w2=%08X w3=%08X w4=%08X w5=%08X w6=%08X w7=%08X\n",
-			rxCount, addr.String(),
-			words[0], words[1], words[2], words[3], words[4], words[5], words[6], words[7],
-		)
+		if words[0] == magicNSR2 {
+			seq := words[1]
+			op := uint8(words[2] >> 24)
+			rt := uint8(words[2] >> 16)
+			addrLow := uint16(words[2] & 0xFFFF)
+			cartAddr := words[3]
+			value := words[4]
+			pc := words[5]
+			drops := words[6]
+			payloadLen := words[7]
+			if payloadLen > 32 {
+				payloadLen = 32
+			}
+			if int(metaBytes+payloadLen) > copyLen {
+				payloadLen = uint32(copyLen - metaBytes)
+			}
+			payload := p[metaBytes : metaBytes+payloadLen]
+
+			fmt.Printf(
+				"rx#%d from=%s nsr2 seq=%d op=0x%02X rt=0x%02X addr=%08X (low=%04X) value=%08X pc=%08X drops=%d payload_len=%d\n",
+				rxCount, addr.String(), seq, op, rt, cartAddr, addrLow, value, pc, drops, payloadLen,
+			)
+
+			// PI DMA probe event from dma.c interceptor.
+			// value currently carries DMA length and payload carries copied DMA bytes.
+			if op == 0x31 {
+				if payloadLen >= 8 && payload[0] == 'O' && payload[1] == 'O' && payload[2] == 'T' {
+					xBits := binary.BigEndian.Uint32(payload[4:8])
+					x := u32ToF32BE(xBits)
+					fmt.Printf("  pi_dma_probe cart=%08X len=%d hdr=%c%c%c x_bits=%08X x=%f\n",
+						cartAddr, value, payload[0], payload[1], payload[2], xBits, x)
+				} else {
+					fmt.Printf("  pi_dma_probe cart=%08X len=%d payload=% X\n", cartAddr, value, payload)
+				}
+			}
+		} else if words[0] == magicNSR1 {
+			seq := words[1]
+			op := uint8(words[2] >> 24)
+			rt := uint8(words[2] >> 16)
+			addrLow := uint16(words[2] & 0xFFFF)
+			cartAddr := words[3]
+			value := words[4]
+			pc := words[5]
+			drops := words[6]
+			fmt.Printf(
+				"rx#%d from=%s nsr1 seq=%d op=0x%02X rt=0x%02X addr=%08X (low=%04X) value=%08X pc=%08X drops=%d\n",
+				rxCount, addr.String(), seq, op, rt, cartAddr, addrLow, value, pc, drops,
+			)
+		} else if p[0] == 'O' && p[1] == 'O' && p[2] == 'T' {
+			xBits := binary.BigEndian.Uint32(p[4:8])
+			x := u32ToF32BE(xBits)
+			fmt.Printf(
+				"rx#%d from=%s raw_oot hdr=%c%c%c x_bits=%08X x=%f\n",
+				rxCount, addr.String(), p[0], p[1], p[2], xBits, x,
+			)
+		} else {
+			fmt.Printf(
+				"rx#%d from=%s unknown w0=%08X w1=%08X w2=%08X w3=%08X w4=%08X w5=%08X w6=%08X w7=%08X\n",
+				rxCount, addr.String(),
+				words[0], words[1], words[2], words[3], words[4], words[5], words[6], words[7],
+			)
+		}
 
 		if *echoBack {
-			if _, err := conn.WriteTo(p[:], addr); err != nil {
+			if _, err := conn.WriteTo(p[:copyLen], addr); err != nil {
 				fmt.Printf("write error: %v\n", err)
 			}
 		}
