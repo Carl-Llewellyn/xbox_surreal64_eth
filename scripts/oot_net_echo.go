@@ -29,6 +29,10 @@ func u32ToF32BE(v uint32) float32 {
 	return math.Float32frombits(v)
 }
 
+func be16(b []byte) uint16 {
+	return binary.BigEndian.Uint16(b)
+}
+
 func main() {
 	listen := flag.String("listen", ":55365", "UDP listen address")
 	echoBack := flag.Bool("echo", true, "echo packet back to sender")
@@ -92,11 +96,28 @@ func main() {
 			// PI DMA probe event from dma.c interceptor.
 			// value currently carries DMA length and payload carries copied DMA bytes.
 			if op == 0x31 {
-				if payloadLen >= 8 && payload[0] == 'O' && payload[1] == 'O' && payload[2] == 'T' {
+				if payloadLen >= 30 && payload[0] == 'O' && payload[1] == 'O' && payload[2] == 'T' {
 					xBits := binary.BigEndian.Uint32(payload[4:8])
+					yBits := binary.BigEndian.Uint32(payload[8:12])
+					zBits := binary.BigEndian.Uint32(payload[12:16])
 					x := u32ToF32BE(xBits)
-					fmt.Printf("  pi_dma_probe cart=%08X len=%d hdr=%c%c%c x_bits=%08X x=%f\n",
-						cartAddr, value, payload[0], payload[1], payload[2], xBits, x)
+					y := u32ToF32BE(yBits)
+					z := u32ToF32BE(zBits)
+					pitch := int16(be16(payload[16:18]))
+					yaw := int16(be16(payload[18:20]))
+					roll := int16(be16(payload[20:22]))
+					camYaw := int16(be16(payload[22:24]))
+					buttons := be16(payload[24:26])
+					stickX := int8(payload[26])
+					stickY := int8(payload[27])
+					level := payload[28]
+					playerID := payload[3]
+					fmt.Printf("  pi_dma_probe cart=%08X len=%d hdr=%c%c%c pid=%d\n",
+						cartAddr, value, payload[0], payload[1], payload[2], playerID)
+					fmt.Printf("    pos: x=%f y=%f z=%f (bits %08X %08X %08X)\n", x, y, z, xBits, yBits, zBits)
+					fmt.Printf("    rot: pitch=%d yaw=%d roll=%d cam_yaw=%d\n", pitch, yaw, roll, camYaw)
+					fmt.Printf("    in : buttons=%04X stick_x=%d stick_y=%d level=%d reserved=%d\n",
+						buttons, stickX, stickY, level, payload[29])
 				} else {
 					fmt.Printf("  pi_dma_probe cart=%08X len=%d payload=% X\n", cartAddr, value, payload)
 				}
