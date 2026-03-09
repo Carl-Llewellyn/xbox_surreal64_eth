@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AudioMusyX", "AudioMusyX.vcproj", "{5AA63184-8488-4760-8A8F-2784090D5A77}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Profile = Profile
+		Profile_FastCap = Profile_FastCap
+		Release = Release
+		Release_LTCG = Release_LTCG
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{5AA63184-8488-4760-8A8F-2784090D5A77}.Debug.ActiveCfg = Debug|Xbox
+		{5AA63184-8488-4760-8A8F-2784090D5A77}.Debug.Build.0 = Debug|Xbox
+		{5AA63184-8488-4760-8A8F-2784090D5A77}.Profile.ActiveCfg = Profile|Xbox
+		{5AA63184-8488-4760-8A8F-2784090D5A77}.Profile.Build.0 = Profile|Xbox
+		{5AA63184-8488-4760-8A8F-2784090D5A77}.Profile_FastCap.ActiveCfg = Profile_FastCap|Xbox
+		{5AA63184-8488-4760-8A8F-2784090D5A77}.Profile_FastCap.Build.0 = Profile_FastCap|Xbox
+		{5AA63184-8488-4760-8A8F-2784090D5A77}.Release.ActiveCfg = Release|Xbox
+		{5AA63184-8488-4760-8A8F-2784090D5A77}.Release.Build.0 = Release|Xbox
+		{5AA63184-8488-4760-8A8F-2784090D5A77}.Release_LTCG.ActiveCfg = Release_LTCG|Xbox
+		{5AA63184-8488-4760-8A8F-2784090D5A77}.Release_LTCG.Build.0 = Release_LTCG|Xbox
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

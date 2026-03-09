@@ -1,0 +1,27 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibSampleRate", "libsamplerate.vcproj", "{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug Win32 = Debug Win32
+		Debug Xbox = Debug Xbox
+		Release Win32 = Release Win32
+		Release Xbox = Release Xbox
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Debug Win32.ActiveCfg = Debug|Win32
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Debug Win32.Build.0 = Debug|Win32
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Debug Xbox.ActiveCfg = Debug|Xbox
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Debug Xbox.Build.0 = Debug|Xbox
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Release Win32.ActiveCfg = Release|Win32
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Release Win32.Build.0 = Release|Win32
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Release Xbox.ActiveCfg = Release|Xbox
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Release Xbox.Build.0 = Release|Xbox
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,8 @@
+//
+#define BUILDNUM_ENABLED (1)
+#define MODIFY_VERSIONINFO (1)
+#define FILE_VERSION0 (5)
+#define FILE_VERSION1 (6)
+#define FILE_VERSION2 (0)
+#define BUILD_NUMBER (20040519)
+#define BUILD_DATE "2004-05-19"

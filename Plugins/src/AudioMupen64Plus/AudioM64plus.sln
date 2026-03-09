@@ -1,0 +1,45 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AudioM64plus", "AudioM64plus.vcproj", "{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3395D5AE-468F-4408-8488-92FD6277B279} = {3395D5AE-468F-4408-8488-92FD6277B279}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibSampleRate", "libsamplerate-0.1.7\src\libsamplerate.vcproj", "{3395D5AE-468F-4408-8488-92FD6277B279}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Profile = Profile
+		Profile_FastCap = Profile_FastCap
+		Release = Release
+		Release_LTCG = Release_LTCG
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Debug.ActiveCfg = Debug|Xbox
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Debug.Build.0 = Debug|Xbox
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Profile.ActiveCfg = Profile|Xbox
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Profile.Build.0 = Profile|Xbox
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Profile_FastCap.ActiveCfg = Profile_FastCap|Xbox
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Profile_FastCap.Build.0 = Profile_FastCap|Xbox
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Release.ActiveCfg = Release|Xbox
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Release.Build.0 = Release|Xbox
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Release_LTCG.ActiveCfg = Release_LTCG|Xbox
+		{ED357457-85EE-4E34-9B7E-3AE73D9DCC53}.Release_LTCG.Build.0 = Release_LTCG|Xbox
+		{3395D5AE-468F-4408-8488-92FD6277B279}.Debug.ActiveCfg = Debug|Xbox
+		{3395D5AE-468F-4408-8488-92FD6277B279}.Debug.Build.0 = Debug|Xbox
+		{3395D5AE-468F-4408-8488-92FD6277B279}.Profile.ActiveCfg = Profile|Xbox
+		{3395D5AE-468F-4408-8488-92FD6277B279}.Profile.Build.0 = Profile|Xbox
+		{3395D5AE-468F-4408-8488-92FD6277B279}.Profile_FastCap.ActiveCfg = Profile_FastCap|Xbox
+		{3395D5AE-468F-4408-8488-92FD6277B279}.Profile_FastCap.Build.0 = Profile_FastCap|Xbox
+		{3395D5AE-468F-4408-8488-92FD6277B279}.Release.ActiveCfg = Release|Xbox
+		{3395D5AE-468F-4408-8488-92FD6277B279}.Release.Build.0 = Release|Xbox
+		{3395D5AE-468F-4408-8488-92FD6277B279}.Release_LTCG.ActiveCfg = Release_LTCG|Xbox
+		{3395D5AE-468F-4408-8488-92FD6277B279}.Release_LTCG.Build.0 = Release_LTCG|Xbox
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

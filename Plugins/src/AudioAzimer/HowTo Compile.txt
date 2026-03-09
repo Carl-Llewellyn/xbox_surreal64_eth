@@ -1,0 +1,33 @@
+Open up audiohle.h
+
+Modify #include "AudioSpec.h" to a header file containing the following:
+-#include containing Audio Specification Structure or the Audio Specification Structure itself
+-an extern of the AUDIO_INFO Structure - ex. extern AUDIO_INFO myaudioinfo
+
+Modify #define dmem to the extern of AUDIO_INFO Structure DMEM member
+- ex. #define dmem myaudioinfo.DMEM
+
+Modify #define imem to the extern of AUDIO_INFO Structure IMEM member
+- ex. #define imem myaudioinfo.IMEM
+
+Modify #define rdram to the extern of AUDIO_INFO Structure RDRAM member
+- ex. #define rdram myaudioinfo.RDRAM
+
+
+If you are not using the Audio Specification, simply supply a pointer to your 
+dmem, imem, and rdram memory blocks.
+
+#define dmem (u8 *)myDmem;
+etc...
+------------------------------------------------------------------------------------
+Usage:
+void HLEStart ();
+- Processes an Audio List
+
+void ChangeABI (int type); // type 0 = AutoDetectMode
+- ChangeABI needs to be set to 0 after RomOpen
+------------------------------------------------------------------------------------
+
+Good Luck!
+
+-Azimer

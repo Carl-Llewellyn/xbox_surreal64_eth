@@ -1,0 +1,60 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libSDLx - Audio", "libSDLx_Audio.vcproj", "{B0A20BB6-45F7-4356-8A6A-7697E86C2FEE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4C2C0A26-3834-4491-9634-CC920FEF9D03} = {4C2C0A26-3834-4491-9634-CC920FEF9D03}
+		{51455757-140E-4492-BA81-E640678D5B7A} = {51455757-140E-4492-BA81-E640678D5B7A}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mikmod", "mikmod\mikmod.vcproj", "{4C2C0A26-3834-4491-9634-CC920FEF9D03}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "timidity", "timidity\timidity.vcproj", "{51455757-140E-4492-BA81-E640678D5B7A}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Profile = Profile
+		Profile_FastCap = Profile_FastCap
+		Release = Release
+		Release_LTCG = Release_LTCG
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{B0A20BB6-45F7-4356-8A6A-7697E86C2FEE}.Debug.ActiveCfg = Debug|Xbox
+		{B0A20BB6-45F7-4356-8A6A-7697E86C2FEE}.Debug.Build.0 = Debug|Xbox
+		{B0A20BB6-45F7-4356-8A6A-7697E86C2FEE}.Profile.ActiveCfg = Profile|Xbox
+		{B0A20BB6-45F7-4356-8A6A-7697E86C2FEE}.Profile.Build.0 = Profile|Xbox
+		{B0A20BB6-45F7-4356-8A6A-7697E86C2FEE}.Profile_FastCap.ActiveCfg = Profile_FastCap|Xbox
+		{B0A20BB6-45F7-4356-8A6A-7697E86C2FEE}.Profile_FastCap.Build.0 = Profile_FastCap|Xbox
+		{B0A20BB6-45F7-4356-8A6A-7697E86C2FEE}.Release.ActiveCfg = Release|Xbox
+		{B0A20BB6-45F7-4356-8A6A-7697E86C2FEE}.Release.Build.0 = Release|Xbox
+		{B0A20BB6-45F7-4356-8A6A-7697E86C2FEE}.Release_LTCG.ActiveCfg = Release_LTCG|Xbox
+		{B0A20BB6-45F7-4356-8A6A-7697E86C2FEE}.Release_LTCG.Build.0 = Release_LTCG|Xbox
+		{4C2C0A26-3834-4491-9634-CC920FEF9D03}.Debug.ActiveCfg = Debug|Xbox
+		{4C2C0A26-3834-4491-9634-CC920FEF9D03}.Debug.Build.0 = Debug|Xbox
+		{4C2C0A26-3834-4491-9634-CC920FEF9D03}.Profile.ActiveCfg = Profile|Xbox
+		{4C2C0A26-3834-4491-9634-CC920FEF9D03}.Profile.Build.0 = Profile|Xbox
+		{4C2C0A26-3834-4491-9634-CC920FEF9D03}.Profile_FastCap.ActiveCfg = Profile_FastCap|Xbox
+		{4C2C0A26-3834-4491-9634-CC920FEF9D03}.Profile_FastCap.Build.0 = Profile_FastCap|Xbox
+		{4C2C0A26-3834-4491-9634-CC920FEF9D03}.Release.ActiveCfg = Release|Xbox
+		{4C2C0A26-3834-4491-9634-CC920FEF9D03}.Release.Build.0 = Release|Xbox
+		{4C2C0A26-3834-4491-9634-CC920FEF9D03}.Release_LTCG.ActiveCfg = Release_LTCG|Xbox
+		{4C2C0A26-3834-4491-9634-CC920FEF9D03}.Release_LTCG.Build.0 = Release_LTCG|Xbox
+		{51455757-140E-4492-BA81-E640678D5B7A}.Debug.ActiveCfg = Debug|Xbox
+		{51455757-140E-4492-BA81-E640678D5B7A}.Debug.Build.0 = Debug|Xbox
+		{51455757-140E-4492-BA81-E640678D5B7A}.Profile.ActiveCfg = Profile|Xbox
+		{51455757-140E-4492-BA81-E640678D5B7A}.Profile.Build.0 = Profile|Xbox
+		{51455757-140E-4492-BA81-E640678D5B7A}.Profile_FastCap.ActiveCfg = Profile_FastCap|Xbox
+		{51455757-140E-4492-BA81-E640678D5B7A}.Profile_FastCap.Build.0 = Profile_FastCap|Xbox
+		{51455757-140E-4492-BA81-E640678D5B7A}.Release.ActiveCfg = Release|Xbox
+		{51455757-140E-4492-BA81-E640678D5B7A}.Release.Build.0 = Release|Xbox
+		{51455757-140E-4492-BA81-E640678D5B7A}.Release_LTCG.ActiveCfg = Release_LTCG|Xbox
+		{51455757-140E-4492-BA81-E640678D5B7A}.Release_LTCG.Build.0 = Release_LTCG|Xbox
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

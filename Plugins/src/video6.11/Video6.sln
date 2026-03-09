@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "6.11", "Video6.11.vcproj", "{B03134F1-3846-4D16-B5F3-3F69C54DE23A}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{B03134F1-3846-4D16-B5F3-3F69C54DE23A}.Debug.ActiveCfg = Debug|Xbox
+		{B03134F1-3846-4D16-B5F3-3F69C54DE23A}.Debug.Build.0 = Debug|Xbox
+		{B03134F1-3846-4D16-B5F3-3F69C54DE23A}.Release.ActiveCfg = Release|Xbox
+		{B03134F1-3846-4D16-B5F3-3F69C54DE23A}.Release.Build.0 = Release|Xbox
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
