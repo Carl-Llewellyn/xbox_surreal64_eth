@@ -3,15 +3,13 @@
 
 #include "globals.h"
 
+//start udp networking and worker thread
 void NetProbe_Startup(void);
+
+//stop udp networking and worker thread
 void NetProbe_Shutdown(void);
 
-/* Queue one PI/SRAM interception event for async UDP send.
- * op: caller-defined opcode (e.g. read/write + region)
- * addr: physical cart address (masked form recommended)
- * value: sampled 32-bit value
- * rt/pc: optional CPU context for debugging
- */
+//queue one event for async network send
 void NetProbe_QueueEvent(uint32 op, uint32 addr, uint32 value, uint32 rt, uint32 pc);
 
 #endif
