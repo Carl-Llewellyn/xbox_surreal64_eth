@@ -53,6 +53,8 @@ typedef struct NetState_s {
 	struct sockaddr_in remote;
 	HANDLE thread;
 	NetEvent ring[NET_RING_SIZE];
+	volatile LONG incoming_len;
+	uint8 incoming_payload[NET_PAYLOAD_BYTES];
 } NetState;
 
 //module state
@@ -65,6 +67,11 @@ static __forceinline void PutBE32(uint8 *p, uint32 w)
 	p[1] = (uint8)(w >> 16);
 	p[2] = (uint8)(w >> 8);
 	p[3] = (uint8)w;
+}
+
+static __forceinline uint32 ReadBE32(const uint8 *p)
+{
+	return ((uint32)p[0] << 24) | ((uint32)p[1] << 16) | ((uint32)p[2] << 8) | (uint32)p[3];
 }
 
 //enqueue one event from emu thread
@@ -131,6 +138,69 @@ static void SendEvent(const NetEvent *e)
 	sendto(g_net.sock, (const char *)pkt, NET_PACKET_BYTES, 0, (SOCKADDR *)&g_net.remote, sizeof(g_net.remote));
 }
 
+//consume one inbound UDP packet and store a latest 32-byte payload snapshot
+static void PollIncoming(void)
+{
+	uint8 pkt[NET_PACKET_BYTES];
+	uint8 payload[NET_PAYLOAD_BYTES];
+	struct sockaddr_in src;
+	int srcLen = sizeof(src);
+	int recvLen;
+	int err;
+	uint32 w2;
+	uint32 addrLow;
+	uint32 copyLen = 0;
+
+	for(;;) {
+		srcLen = sizeof(src);
+		recvLen = recvfrom(g_net.sock, (char *)pkt, sizeof(pkt), 0, (SOCKADDR *)&src, &srcLen);
+		if(recvLen <= 0) {
+			err = WSAGetLastError();
+			if(err == WSAEWOULDBLOCK) {
+				return;
+			}
+			return;
+		}
+
+		memset(payload, 0, sizeof(payload));
+
+		//allow direct 32-byte payload packets
+		if(recvLen >= (int)NET_PAYLOAD_BYTES && pkt[0] == 'O' && pkt[1] == 'O' && pkt[2] == 'T') {
+			copyLen = NET_PAYLOAD_BYTES;
+			memcpy(payload, pkt, NET_PAYLOAD_BYTES);
+		}
+		//or nsr2 framed packets with payload at byte 32
+		//only accept nsr2 packets targeting OOT incoming SRAM window (0x7A20-0x7A3F)
+		//to avoid feeding echoed outbound probe packets (0x7A00 window) back into input.
+		else if(recvLen >= (int)NET_PACKET_BYTES && ReadBE32(pkt) == 0x4E535232) {
+			w2 = ReadBE32(pkt + 8);
+			addrLow = (w2 & 0xFFFF);
+			if(addrLow < 0x7A20 || addrLow >= 0x7A40) {
+				continue;
+			}
+
+			copyLen = ReadBE32(pkt + 28);
+			if(copyLen > NET_PAYLOAD_BYTES) {
+				copyLen = NET_PAYLOAD_BYTES;
+			}
+			if(copyLen > 0) {
+				memcpy(payload, pkt + NET_META_BYTES, copyLen);
+			}
+			if(copyLen < 3 || payload[0] != 'O' || payload[1] != 'O' || payload[2] != 'T') {
+				continue;
+			}
+		}
+		else {
+			continue;
+		}
+
+		if(copyLen > 0) {
+			memcpy((void *)g_net.incoming_payload, payload, NET_PAYLOAD_BYTES);
+			InterlockedExchange(&g_net.incoming_len, (LONG)copyLen);
+		}
+	}
+}
+
 //background sender thread
 //drains queued events and transmits packets
 static DWORD WINAPI NetThreadProc(LPVOID p)
@@ -140,6 +210,7 @@ static DWORD WINAPI NetThreadProc(LPVOID p)
 		while(Dequeue(&e)) {
 			SendEvent(&e);
 		}
+		PollIncoming();
 		Sleep(1);
 	}
 	return 0;
@@ -244,4 +315,26 @@ void NetProbe_QueueEvent(uint32 op, uint32 addr, uint32 value, uint32 rt, uint32
 		memcpy(e.payload, payload, copyLen);
 	}
 	Enqueue(&e);
+}
+
+uint32 NetProbe_CopyIncoming(uint8* out, uint32 out_len)
+{
+	uint32 copyLen;
+
+	if(!g_net.started || out == NULL || out_len == 0) {
+		return 0;
+	}
+
+	copyLen = (uint32)g_net.incoming_len;
+	if(copyLen > NET_PAYLOAD_BYTES) {
+		copyLen = NET_PAYLOAD_BYTES;
+	}
+	if(copyLen > out_len) {
+		copyLen = out_len;
+	}
+
+	if(copyLen > 0) {
+		memcpy(out, (const void *)g_net.incoming_payload, copyLen);
+	}
+	return copyLen;
 }

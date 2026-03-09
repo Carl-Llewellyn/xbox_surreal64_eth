@@ -37,6 +37,7 @@
 #include "compiler.h"
 #include "fileio.h"
 #include "rompaging.h"
+#include "network.h"
 
 #ifdef SAVEOPCOUNTER
 #define EXTRA_DMA_TIMING(val)	DMAIncreaseTimer(val);
@@ -531,6 +532,23 @@ L1:
 				payload,
 				payload_len
 			);
+		}
+
+		// incoming OOT network packet window, consumed by PI cart->RDRAM read at 0x7A20-0x7A3F
+		if (((pi_cart_addr_reg & 0x0000FFFF) >= 0x7A20) && ((pi_cart_addr_reg & 0x0000FFFF) < 0x7A40)) {
+			uint8 incoming[32];
+			uint32 incomingLen = NetProbe_CopyIncoming(incoming, sizeof(incoming));
+			uint32 copyLen = len;
+			uint32 i;
+
+			if (copyLen > sizeof(incoming)) {
+				copyLen = sizeof(incoming);
+			}
+
+			for (i = 0; i < copyLen; i++) {
+				uint8 b = (i < incomingLen) ? incoming[i] : 0;
+				*(PMEM_WRITE_UBYTE(PIDMATargetAddress + i)) = b;
+			}
 		}
 
 			return;
